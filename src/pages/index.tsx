@@ -19,6 +19,7 @@ import {
 import clsx from "clsx";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
+import Image from "next/image";
 
 // Bento Grid Component
 const BentoGrid = ({
@@ -127,7 +128,15 @@ export default function Home() {
         <header className="flex justify-between items-center mb-12">
           <div>
             <div className="inline-flex items-center space-x-2 mb-2">
-              <Sparkles className="w-5 h-5 text-[#14ee26]" />
+              <div className="w-8 h-8 relative">
+                <Image
+                  src="/images/logo.svg"
+                  alt="Logo"
+                  width={32}
+                  height={32}
+                  className="object-contain"
+                />
+              </div>
               <span className="text-sm font-bold uppercase tracking-wider text-muted-foreground">
                 Web3 Identity Dashboard
               </span>
