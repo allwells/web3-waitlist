@@ -46,9 +46,9 @@ export default function ReferralPage({ referrer }: { referrer: string }) {
         >
           <div className="inline-flex items-center justify-center p-3 mb-8 bg-card-bg/50 backdrop-blur-md rounded-full border border-card-border shadow-sm">
             <div className="flex -space-x-2 mr-3">
-              <div className="w-6 h-6 rounded-full bg-gradient-to-r from-blue-400 to-blue-600 border-2 border-background" />
-              <div className="w-6 h-6 rounded-full bg-gradient-to-r from-purple-400 to-purple-600 border-2 border-background" />
-              <div className="w-6 h-6 rounded-full bg-gradient-to-r from-[#14ee26] to-green-600 border-2 border-background" />
+              <div className="w-6 h-6 rounded-full bg-linear-to-r from-blue-400 to-blue-600 border-2 border-background" />
+              <div className="w-6 h-6 rounded-full bg-linear-to-r from-purple-400 to-purple-600 border-2 border-background" />
+              <div className="w-6 h-6 rounded-full bg-linear-to-r from-[#14ee26] to-green-600 border-2 border-background" />
             </div>
             <span className="text-sm font-medium">
               Invited by{" "}
@@ -58,7 +58,7 @@ export default function ReferralPage({ referrer }: { referrer: string }) {
 
           <h1 className="text-4xl md:text-5xl font-black tracking-tight mb-6">
             Skip the line. <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#14ee26] to-green-600">
+            <span className="text-transparent bg-clip-text bg-linear-to-r from-[#14ee26] to-green-600">
               Join the Waitlist.
             </span>
           </h1>

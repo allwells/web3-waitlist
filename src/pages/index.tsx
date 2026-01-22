@@ -37,7 +37,7 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-black text-white font-sans flex flex-col items-center justify-center p-6 relative overflow-hidden">
       <Head>
-        <title>Tap.fun | Web3 Waitlist</title>
+        <title>Tap.fun</title>
       </Head>
 
       {/* Background Decor */}
