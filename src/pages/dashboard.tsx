@@ -55,7 +55,7 @@ const BentoGridItem = ({
   return (
     <div
       className={clsx(
-        "row-span-1 rounded-xl group/bento transition duration-200 border border-white/10 justify-between flex flex-col space-y-4 shadow-none bg-black/40 backdrop-blur-xl",
+        "row-span-1 rounded-xl group/bento transition duration-200 border border-white/10 justify-between flex flex-col space-y-4 shadow-none bg-black/40 backdrop-blur-xl p-6",
         className,
       )}
     >
