@@ -11,9 +11,12 @@ export default function Home() {
   const { data: session } = useSession();
 
   // Determine current step
+  // Step 1: Login with X
+  // Step 2: Connect Wallet (Join Waitlist)
+  // Step 3: Success
   const getStep = () => {
     if (isConnected && session) return 3;
-    if (isConnected) return 2;
+    if (session) return 2;
     return 1;
   };
 
@@ -71,13 +74,48 @@ export default function Home() {
         </motion.div>
 
         <div className="w-full space-y-4">
-          {/* Step 1: Connect Wallet */}
+          {/* Step 1: X Login (Moved to Step 1) */}
           <StepCard
             active={currentStep === 1}
             completed={currentStep > 1}
+            disabled={false}
+            icon={<Twitter className="w-6 h-6" />}
+            title="Verify Identity"
+            description="Connect your X account."
+          >
+            <div className="mt-6">
+              {session ? (
+                <button
+                  onClick={() => signOut()}
+                  className="w-full flex justify-center items-center py-3 px-4 border-2 border-black text-sm font-bold rounded-xl text-black bg-white hover:bg-gray-50 transition-all shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
+                >
+                  @{session.user?.name || "User"}
+                  <div className="ml-2 bg-[#14ee26] rounded-full p-0.5 text-black">
+                    <Check className="w-3 h-3" />
+                  </div>
+                </button>
+              ) : (
+                <button
+                  onClick={() => signIn("twitter")}
+                  className={clsx(
+                    "w-full flex justify-center items-center py-4 px-4 border text-sm font-bold uppercase tracking-wider rounded-xl transition-all",
+                    "border-black text-black bg-[#14ee26] hover:bg-[#12d422] shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] cursor-pointer",
+                  )}
+                >
+                  Connect X
+                </button>
+              )}
+            </div>
+          </StepCard>
+
+          {/* Step 2: Connect Wallet (Moved to Step 2) */}
+          <StepCard
+            active={currentStep === 2}
+            completed={currentStep > 2}
+            disabled={currentStep < 2}
             icon={<Wallet className="w-5 h-5" />}
-            title="Connect Wallet"
-            description="Link your Ethereum wallet."
+            title="Join Waitlist"
+            description="Connect wallet to finalize."
           >
             <div className="mt-6 flex justify-center">
               <ConnectButton.Custom>
@@ -117,7 +155,7 @@ export default function Home() {
                               onClick={openConnectModal}
                               className="group relative w-full flex justify-center py-4 px-4 border border-black text-sm font-bold uppercase tracking-wider rounded-xl text-black bg-[#14ee26] hover:bg-[#12d422] focus:outline-none focus:ring-4 focus:ring-[#14ee26]/30 transition-all shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px]"
                             >
-                              Connect Wallet
+                              Join Waitlist
                             </button>
                           );
                         }
@@ -135,43 +173,6 @@ export default function Home() {
                   );
                 }}
               </ConnectButton.Custom>
-            </div>
-          </StepCard>
-
-          {/* Step 2: X Login */}
-          <StepCard
-            active={currentStep === 2}
-            completed={currentStep > 2}
-            disabled={currentStep < 2}
-            icon={<Twitter className="w-6 h-6" />}
-            title="Verify Identity"
-            description="Connect your X account."
-          >
-            <div className="mt-6">
-              {session ? (
-                <button
-                  onClick={() => signOut()}
-                  className="w-full flex justify-center items-center py-3 px-4 border-2 border-black text-sm font-bold rounded-xl text-black bg-white hover:bg-gray-50 transition-all shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
-                >
-                  @{session.user?.name || "User"}
-                  <div className="ml-2 bg-[#14ee26] rounded-full p-0.5 text-black">
-                    <Check className="w-3 h-3" />
-                  </div>
-                </button>
-              ) : (
-                <button
-                  onClick={() => signIn("twitter")}
-                  disabled={currentStep !== 2}
-                  className={clsx(
-                    "w-full flex justify-center items-center py-4 px-4 border text-sm font-bold uppercase tracking-wider rounded-xl transition-all",
-                    currentStep === 2
-                      ? "border-black text-black bg-[#14ee26] hover:bg-[#12d422] shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] cursor-pointer"
-                      : "border-gray-200 text-gray-400 bg-gray-50 cursor-not-allowed",
-                  )}
-                >
-                  Connect X
-                </button>
-              )}
             </div>
           </StepCard>
 
