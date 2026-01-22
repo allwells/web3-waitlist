@@ -3,24 +3,19 @@ import "@rainbow-me/rainbowkit/styles.css";
 import type { AppProps } from "next/app";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { WagmiProvider } from "wagmi";
-import {
-  RainbowKitProvider,
-  lightTheme,
-  darkTheme,
-} from "@rainbow-me/rainbowkit";
+import { RainbowKitProvider, darkTheme } from "@rainbow-me/rainbowkit";
 import { SessionProvider } from "next-auth/react";
 import { config } from "@/config/wagmi";
 import { Inter } from "next/font/google";
-import { ThemeProvider, useTheme } from "next-themes";
-import { ThemeToggle } from "@/components/ThemeToggle";
 import { useEffect, useState } from "react";
+import CustomCursor from "@/components/CustomCursor";
+import Head from "next/head";
 
 const inter = Inter({ subsets: ["latin"] });
 const queryClient = new QueryClient();
 
 // Use any to avoid React types mismatch between React 19 (project) and RainbowKit (internal)
 function RainbowKitWrapper({ children }: { children: any }) {
-  const { theme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -31,19 +26,11 @@ function RainbowKitWrapper({ children }: { children: any }) {
 
   return (
     <RainbowKitProvider
-      theme={
-        theme === "dark"
-          ? darkTheme({
-              accentColor: "#14ee26",
-              accentColorForeground: "black",
-              borderRadius: "medium",
-            })
-          : lightTheme({
-              accentColor: "#000000",
-              accentColorForeground: "white",
-              borderRadius: "medium",
-            })
-      }
+      theme={darkTheme({
+        accentColor: "#14ee26",
+        accentColorForeground: "black",
+        borderRadius: "medium",
+      })}
       coolMode
     >
       {children}
@@ -59,18 +46,15 @@ export default function App({
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
         <SessionProvider session={session}>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="dark"
-            enableSystem={false}
-          >
-            <RainbowKitWrapper>
-              <main className={inter.className}>
-                <ThemeToggle />
-                <Component {...pageProps} />
-              </main>
-            </RainbowKitWrapper>
-          </ThemeProvider>
+          <Head>
+            <link rel="icon" href="/favicon.ico" />
+          </Head>
+          <CustomCursor />
+          <RainbowKitWrapper>
+            <main className={inter.className}>
+              <Component {...pageProps} />
+            </main>
+          </RainbowKitWrapper>
         </SessionProvider>
       </QueryClientProvider>
     </WagmiProvider>
