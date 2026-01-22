@@ -10,6 +10,8 @@ import {
   Sparkles,
   Check,
   ArrowRight,
+  Copy,
+  Users,
 } from "lucide-react";
 import clsx from "clsx";
 import { useTheme } from "next-themes";
@@ -19,6 +21,7 @@ export default function Home() {
   const { address, isConnected } = useAccount();
   const { data: session } = useSession();
   const [mounted, setMounted] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => setMounted(true), []);
 
@@ -29,6 +32,17 @@ export default function Home() {
   };
 
   const currentStep = getStep();
+
+  const handleCopy = () => {
+    // Determine the referral link to copy
+    // Priority: address -> session username -> generic ID
+    const refCode = address || session?.user?.name || "user123";
+    const link = `https://topdotfunwaitlist.vercel.app/${refCode.slice(0, 6)}`;
+
+    navigator.clipboard.writeText(link);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   // Prevent hydration mismatch
   if (!mounted) return null;
@@ -232,8 +246,49 @@ export default function Home() {
             <motion.div
               initial={{ opacity: 0, height: 0, marginTop: 0 }}
               animate={{ opacity: 1, height: "auto", marginTop: 40 }}
-              className="w-full max-w-3xl mx-auto"
+              className="w-full max-w-3xl mx-auto space-y-6"
             >
+              {/* Referral Card */}
+              <div className="relative p-1 rounded-3xl bg-card-bg border border-card-border shadow-2xl overflow-hidden group">
+                <div className="absolute inset-0 bg-[#14ee26]/5 group-hover:bg-[#14ee26]/10 transition-colors duration-500" />
+                <div className="relative p-8">
+                  <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+                    <div className="text-center md:text-left">
+                      <div className="flex items-center justify-center md:justify-start gap-3 mb-2">
+                        <h3 className="text-xl font-bold text-muted-foreground">
+                          Your Referrals
+                        </h3>
+                        <div className="flex items-center gap-2 px-3 py-1 bg-[#14ee26]/10 rounded-full border border-[#14ee26]/20">
+                          <Users className="w-4 h-4 text-[#14ee26]" />
+                          <span className="text-[#14ee26] font-mono font-bold">
+                            0
+                          </span>
+                        </div>
+                      </div>
+                      <p className="text-sm text-muted-foreground">
+                        Share your link to invite friends
+                      </p>
+                    </div>
+
+                    <div className="flex items-center w-full md:w-auto bg-black rounded-xl border border-gray-800 p-1 pl-4">
+                      <code className="flex-1 font-mono text-sm text-gray-400 truncate mr-4 max-w-[200px]">
+                        https://topdotfunwaitlist...
+                      </code>
+                      <button
+                        onClick={handleCopy}
+                        className="p-3 bg-[#14ee26]/10 hover:bg-[#14ee26] text-[#14ee26] hover:text-black rounded-lg transition-all duration-200"
+                      >
+                        {copied ? (
+                          <Check className="w-5 h-5" />
+                        ) : (
+                          <Copy className="w-5 h-5" />
+                        )}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
               <div className="relative p-1 rounded-3xl bg-gradient-to-r from-[#14ee26] via-blue-500 to-purple-600">
                 <div className="bg-card-bg rounded-[22px] p-8 md:p-12 text-center relative overflow-hidden">
                   <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[#14ee26] to-transparent opacity-50" />
