@@ -3,17 +3,25 @@ import { useAccount } from "wagmi";
 import { useSession, signIn, signOut } from "next-auth/react";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { motion, AnimatePresence } from "framer-motion";
-import { Twitter, Wallet, ShieldCheck, Sparkles, Check } from "lucide-react";
+import {
+  Twitter,
+  Wallet,
+  ShieldCheck,
+  Sparkles,
+  Check,
+  ArrowRight,
+} from "lucide-react";
 import clsx from "clsx";
+import { useTheme } from "next-themes";
+import { useEffect, useState } from "react";
 
 export default function Home() {
   const { address, isConnected } = useAccount();
   const { data: session } = useSession();
+  const [mounted, setMounted] = useState(false);
 
-  // Determine current step
-  // Step 1: Login with X
-  // Step 2: Connect Wallet (Join Waitlist)
-  // Step 3: Success
+  useEffect(() => setMounted(true), []);
+
   const getStep = () => {
     if (isConnected && session) return 3;
     if (session) return 2;
@@ -22,12 +30,13 @@ export default function Home() {
 
   const currentStep = getStep();
 
+  // Prevent hydration mismatch
+  if (!mounted) return null;
+
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-background text-foreground selection:bg-[#14ee26] selection:text-black overflow-hidden relative font-sans transition-colors duration-300">
+    <div className="min-h-screen bg-background text-foreground transition-colors duration-300 font-sans selection:bg-[#14ee26] selection:text-black flex flex-col items-center justify-center p-6 relative overflow-hidden">
       <Head>
         <title>Get Early Access | Web3 Waitlist</title>
-        <meta name="description" content="Join the exclusive waitlist." />
-        <link rel="icon" href="/favicon.ico" />
       </Head>
 
       {/* Background Decor - Strategic Green Glow */}
@@ -35,95 +44,119 @@ export default function Home() {
         <motion.div
           animate={{
             scale: [1, 1.2, 1],
-            opacity: [0.3, 0.5, 0.3],
+            opacity: [0.15, 0.3, 0.15],
           }}
           transition={{
             duration: 8,
             repeat: Infinity,
             ease: "easeInOut",
           }}
-          className="w-[600px] h-[600px] bg-[#14ee26] rounded-full blur-[120px] opacity-20 dark:opacity-15"
+          className="w-[800px] h-[800px] bg-[#14ee26] rounded-full blur-[150px] opacity-20 dark:opacity-15"
         />
       </div>
 
-      <main className="z-10 w-full max-w-md px-6 py-12 flex flex-col items-center text-center">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="mb-12 relative"
-        >
-          <div className="inline-flex items-center justify-center p-2 mb-6 bg-white/50 dark:bg-black/50 backdrop-blur-sm rounded-full border border-gray-200 dark:border-gray-800 shadow-sm relative overflow-hidden group">
-            {/* Subtle green shimmer on hover */}
-            <div className="absolute inset-0 bg-[#14ee26]/10 translate-x-full group-hover:translate-x-full transition-transform duration-700" />
-            <Sparkles className="w-4 h-4 text-black dark:text-white mr-2 relative z-10" />
-            <span className="text-xs font-bold text-gray-800 dark:text-gray-200 tracking-wide uppercase relative z-10">
-              Early Access
-            </span>
-          </div>
-          <h1 className="text-5xl font-extrabold tracking-tight text-foreground mb-4 leading-tight">
-            Future of <br />
-            <span className="relative inline-block">
-              <span className="relative z-10">Web3 Identity</span>
-              <span className="absolute bottom-1 left-0 w-full h-3 bg-[#14ee26]/40 -skew-x-6 z-0" />
-            </span>
-          </h1>
-          <p className="text-lg text-muted-foreground font-medium max-w-xs mx-auto">
-            Secure your spot. Link your wallet and verify your profile to join.
-          </p>
-        </motion.div>
-
-        <div className="w-full space-y-4">
-          {/* Step 1: X Login */}
-          <StepCard
-            active={currentStep === 1}
-            completed={currentStep > 1}
-            disabled={false}
-            icon={<Twitter className="w-6 h-6" />}
-            title="Verify Identity"
-            description="Connect your X account."
+      <main className="z-10 w-full max-w-5xl">
+        {/* Header Section */}
+        <div className="text-center mb-16">
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="inline-flex items-center justify-center px-4 py-1.5 mb-6 bg-card-bg/50 backdrop-blur-md rounded-full border border-card-border shadow-sm group cursor-default"
           >
-            <div className="mt-6">
-              {session ? (
+            <Sparkles className="w-3.5 h-3.5 mr-2 text-[#14ee26]" />
+            <span className="text-xs font-bold tracking-widest uppercase text-muted-foreground group-hover:text-foreground transition-colors">
+              Exclusive Access
+            </span>
+          </motion.div>
+
+          <motion.h1
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="text-6xl md:text-7xl font-extrabold tracking-tight mb-6"
+          >
+            Future of <br className="md:hidden" />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-foreground via-foreground to-muted-foreground">
+              Web3 Identity
+            </span>
+          </motion.h1>
+
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.2 }}
+            className="text-xl text-muted-foreground max-w-lg mx-auto"
+          >
+            Claim your unique profile. Verify your social reputation.{" "}
+            <br className="hidden md:block" /> Join the revolution today.
+          </motion.p>
+        </div>
+
+        {/* Dashboard Grid Container */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch">
+          {/* Card 1: Identity (X) */}
+          <ActionCard
+            step={1}
+            currentStep={currentStep}
+            title="Social Identity"
+            description="Verify your reputation."
+            icon={<Twitter className="w-8 h-8" />}
+            isActive={currentStep === 1}
+            isCompleted={currentStep > 1}
+          >
+            {session ? (
+              <div className="flex flex-col items-center w-full">
+                <div className="w-16 h-16 rounded-full bg-foreground flex items-center justify-center mb-4 border-4 border-[#14ee26]">
+                  {session.user?.image ? (
+                    <img
+                      src={session.user.image}
+                      alt="Profile"
+                      className="w-full h-full rounded-full object-cover"
+                    />
+                  ) : (
+                    <span className="text-xl font-bold text-card-bg">
+                      {session.user?.name?.[0]}
+                    </span>
+                  )}
+                </div>
+                <h3 className="text-lg font-bold">@{session.user?.name}</h3>
+                <p className="text-sm text-green-500 mb-6 font-mono flex items-center gap-1">
+                  <Check className="w-3 h-3" /> Verified
+                </p>
                 <button
                   onClick={() => signOut()}
-                  className="w-full flex justify-center items-center py-3 px-4 border-2 border-foreground text-sm font-bold rounded-xl text-foreground bg-card-bg hover:bg-muted transition-all shadow-[4px_4px_0px_0px_var(--color-foreground)]"
+                  className="text-xs text-muted-foreground hover:text-red-500 transition-colors"
                 >
-                  @{session.user?.name || "User"}
-                  <div className="ml-2 bg-[#14ee26] rounded-full p-0.5 text-black">
-                    <Check className="w-3 h-3" />
-                  </div>
+                  Disconnect
                 </button>
-              ) : (
-                <button
-                  onClick={() => signIn("twitter")}
-                  className={clsx(
-                    "w-full flex justify-center items-center py-4 px-4 border text-sm font-bold uppercase tracking-wider rounded-xl transition-all",
-                    "border-foreground text-black bg-[#14ee26] hover:bg-[#12d422] shadow-[4px_4px_0px_0px_var(--color-foreground)] hover:shadow-[2px_2px_0px_0px_var(--color-foreground)] hover:translate-x-[2px] hover:translate-y-[2px] cursor-pointer",
-                  )}
-                >
-                  Connect X
-                </button>
-              )}
-            </div>
-          </StepCard>
+              </div>
+            ) : (
+              <button
+                onClick={() => signIn("twitter")}
+                className="w-full py-4 bg-foreground text-background font-bold rounded-xl hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-3 shadow-lg hover:shadow-xl"
+              >
+                <Twitter className="w-5 h-5 fill-current" />
+                Connect X
+              </button>
+            )}
+          </ActionCard>
 
-          {/* Step 2: Connect Wallet */}
-          <StepCard
-            active={currentStep === 2}
-            completed={currentStep > 2}
-            disabled={currentStep < 2}
-            icon={<Wallet className="w-5 h-5" />}
-            title="Join Waitlist"
-            description="Connect wallet to finalize."
+          {/* Card 2: Wallet */}
+          <ActionCard
+            step={2}
+            currentStep={currentStep}
+            title="Web3 Wallet"
+            description="Connect your assets."
+            icon={<Wallet className="w-8 h-8" />}
+            isActive={currentStep === 2}
+            isCompleted={currentStep > 2}
+            isDisabled={currentStep < 2}
           >
-            <div className="mt-6 flex justify-center">
+            <div className="w-full flex justify-center py-2">
               <ConnectButton.Custom>
                 {({
                   account,
                   chain,
                   openAccountModal,
-                  openChainModal,
                   openConnectModal,
                   authenticationStatus,
                   mounted,
@@ -138,6 +171,7 @@ export default function Home() {
 
                   return (
                     <div
+                      className="w-full"
                       {...(!ready && {
                         "aria-hidden": true,
                         style: {
@@ -146,27 +180,42 @@ export default function Home() {
                           userSelect: "none",
                         },
                       })}
-                      className="w-full"
                     >
                       {(() => {
                         if (!connected) {
                           return (
                             <button
                               onClick={openConnectModal}
-                              className="group relative w-full flex justify-center py-4 px-4 border border-foreground text-sm font-bold uppercase tracking-wider rounded-xl text-black bg-[#14ee26] hover:bg-[#12d422] focus:outline-none focus:ring-4 focus:ring-[#14ee26]/30 transition-all shadow-[4px_4px_0px_0px_var(--color-foreground)] hover:shadow-[2px_2px_0px_0px_var(--color-foreground)] hover:translate-x-[2px] hover:translate-y-[2px]"
+                              disabled={currentStep < 2}
+                              className={clsx(
+                                "w-full py-4 font-bold rounded-xl transition-all flex items-center justify-center gap-3",
+                                currentStep < 2
+                                  ? "bg-muted text-muted-foreground cursor-not-allowed"
+                                  : "bg-[#14ee26] text-black hover:bg-[#12d422] shadow-[4px_4px_0px_0px_var(--color-foreground)] hover:translate-x-[2px] hover:translate-y-[2px]",
+                              )}
                             >
-                              Join Waitlist
+                              <Wallet className="w-5 h-5" />
+                              Connect Wallet
                             </button>
                           );
                         }
                         return (
-                          <button
-                            onClick={openAccountModal}
-                            className="group relative w-full flex justify-center items-center py-3 px-4 border-2 border-foreground text-sm font-bold rounded-xl text-foreground bg-card-bg hover:bg-muted focus:outline-none transition-all shadow-[4px_4px_0px_0px_var(--color-foreground)]"
-                          >
-                            {account.displayName}
-                            <div className="ml-2 w-2 h-2 rounded-full bg-[#14ee26] animate-pulse" />
-                          </button>
+                          <div className="flex flex-col items-center w-full">
+                            <div className="w-16 h-16 rounded-full bg-gradient-to-tr from-blue-500 to-purple-500 mb-4 border-4 border-[#14ee26]" />
+                            <h3 className="text-lg font-bold font-mono">
+                              {account.displayName}
+                            </h3>
+                            <p className="text-sm text-green-500 mb-6 font-mono flex items-center gap-1">
+                              <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />{" "}
+                              Connected
+                            </p>
+                            <button
+                              onClick={openAccountModal}
+                              className="text-xs text-muted-foreground hover:text-foreground transition-colors px-4 py-2 border border-card-border rounded-full hover:bg-card-border"
+                            >
+                              Wallet Details
+                            </button>
+                          </div>
                         );
                       })()}
                     </div>
@@ -174,114 +223,130 @@ export default function Home() {
                 }}
               </ConnectButton.Custom>
             </div>
-          </StepCard>
-
-          {/* Step 3: Success */}
-          <AnimatePresence>
-            {currentStep === 3 && (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.4, delay: 0.2 }}
-                className="mt-8 p-8 bg-black dark:bg-[#111] rounded-2xl border-2 border-[#14ee26] text-center shadow-[0_0_40px_-10px_rgba(20,238,38,0.3)]"
-              >
-                <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-[#14ee26] mb-6 text-black">
-                  <ShieldCheck className="h-8 w-8" aria-hidden="true" />
-                </div>
-                <h3 className="text-2xl font-bold leading-6 text-[#14ee26] mb-2">
-                  You're on the list!
-                </h3>
-                <p className="mt-4 text-sm text-gray-400 font-mono">
-                  Address:{" "}
-                  <span className="text-white">
-                    {address?.slice(0, 6)}...{address?.slice(-4)}
-                  </span>
-                  <br />
-                  Handle:{" "}
-                  <span className="text-white">@{session?.user?.name}</span>
-                </p>
-                <div className="mt-6 pt-6 border-t border-gray-800">
-                  <p className="text-xs text-gray-500">
-                    We'll notify you when your spot opens up.
-                  </p>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
+          </ActionCard>
         </div>
+
+        {/* Success State - Appears below when both actiosn are done */}
+        <AnimatePresence>
+          {currentStep === 3 && (
+            <motion.div
+              initial={{ opacity: 0, height: 0, marginTop: 0 }}
+              animate={{ opacity: 1, height: "auto", marginTop: 40 }}
+              className="w-full max-w-3xl mx-auto"
+            >
+              <div className="relative p-1 rounded-3xl bg-gradient-to-r from-[#14ee26] via-blue-500 to-purple-600">
+                <div className="bg-card-bg rounded-[22px] p-8 md:p-12 text-center relative overflow-hidden">
+                  <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[#14ee26] to-transparent opacity-50" />
+
+                  <motion.div
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{ type: "spring", stiffness: 200, damping: 10 }}
+                    className="w-20 h-20 bg-[#14ee26] rounded-full flex items-center justify-center mx-auto mb-6 text-black shadow-lg shadow-[#14ee26]/40"
+                  >
+                    <ShieldCheck className="w-10 h-10" />
+                  </motion.div>
+
+                  <h2 className="text-4xl font-black mb-4 tracking-tight">
+                    Access Granted
+                  </h2>
+                  <p className="text-lg text-muted-foreground max-w-md mx-auto mb-8">
+                    Congratulations{" "}
+                    <span className="text-foreground font-bold">
+                      @{session?.user?.name}
+                    </span>
+                    . <br />
+                    You have successfully secured your spot on the waitlist.
+                  </p>
+
+                  <button className="px-8 py-3 bg-foreground text-background font-bold rounded-full hover:scale-105 transition-transform">
+                    Share on X
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </main>
 
-      <footer className="absolute bottom-6 text-center text-xs text-muted-foreground font-medium">
+      <footer className="mt-20 text-center text-xs text-muted-foreground font-medium opacity-50 hover:opacity-100 transition-opacity">
         © {new Date().getFullYear()} Web3 Waitlist. All rights reserved.
       </footer>
     </div>
   );
 }
 
-function StepCard({
-  active,
-  completed,
-  disabled,
-  icon,
+function ActionCard({
+  step,
+  currentStep,
   title,
   description,
+  icon,
   children,
+  isActive,
+  isCompleted,
+  isDisabled,
 }: any) {
+  const isPending = !isActive && !isCompleted;
+
   return (
     <motion.div
+      initial={{ opacity: 0, y: 20 }}
       animate={{
-        opacity: disabled ? 0.3 : 1,
-        y: active ? -4 : 0,
-        scale: active ? 1 : 0.98,
-        filter: disabled ? "grayscale(100%) blur(1px)" : "none",
+        opacity: isDisabled ? 0.5 : 1,
+        y: 0,
+        filter: isDisabled ? "grayscale(1)" : "grayscale(0)",
       }}
       className={clsx(
-        "relative overflow-hidden rounded-2xl border-2 p-6 transition-all duration-300",
-        active
-          ? "bg-card-bg border-foreground shadow-[8px_8px_0px_0px_var(--color-foreground)] z-10"
-          : "bg-card-bg border-card-border",
-        completed ? "bg-[#f0fdf2] dark:bg-[#14ee26]/10 border-[#14ee26]" : "",
+        "relative rounded-3xl border-2 p-8 transition-all duration-300 flex flex-col h-full",
+        isActive
+          ? "bg-card-bg border-foreground shadow-2xl scale-[1.02] z-10"
+          : "bg-card-bg/50 border-card-border hover:border-muted-foreground/50",
+        isCompleted ? "border-[#14ee26] bg-[#14ee26]/5" : "",
       )}
     >
-      <div className="flex flex-col items-center gap-3 text-center">
+      <div className="flex justify-between items-start mb-8">
         <div
           className={clsx(
-            "flex h-12 w-12 shrink-0 items-center justify-center rounded-xl transition-colors border-2",
-            active
-              ? "bg-foreground text-[#14ee26] border-foreground"
-              : "bg-card-bg text-muted-foreground border-card-border",
-            completed ? "bg-[#14ee26] text-black border-[#14ee26]" : "",
+            "w-12 h-12 rounded-2xl flex items-center justify-center transition-colors border-2",
+            isCompleted
+              ? "bg-[#14ee26] border-[#14ee26] text-black"
+              : isActive
+                ? "bg-foreground text-background border-foreground"
+                : "bg-card-bg border-card-border text-muted-foreground",
           )}
         >
-          {completed ? <Check className="w-6 h-6 stroke-[3px]" /> : icon}
+          {isCompleted ? <Check className="w-6 h-6 stroke-[3px]" /> : icon}
         </div>
-        <div className="flex-1">
-          <h3
-            className={clsx(
-              "text-lg font-bold",
-              active ? "text-foreground" : "text-muted-foreground",
-            )}
-          >
-            {title}
-          </h3>
-          <p className="text-sm font-medium text-muted-foreground">
-            {description}
-          </p>
-        </div>
+        <span
+          className={clsx(
+            "text-xs font-bold px-3 py-1 rounded-full border",
+            isCompleted
+              ? "bg-[#14ee26]/20 text-[#14ee26] border-[#14ee26]/20"
+              : isActive
+                ? "bg-foreground text-background border-foreground"
+                : "bg-muted text-muted-foreground border-transparent",
+          )}
+        >
+          Step 0{step}
+        </span>
       </div>
 
-      <AnimatePresence>
-        {active && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            className="overflow-hidden"
-          >
-            {children}
-          </motion.div>
-        )}
-      </AnimatePresence>
+      <div className="mb-8">
+        <h3
+          className={clsx(
+            "text-2xl font-bold mb-2",
+            isActive || isCompleted
+              ? "text-foreground"
+              : "text-muted-foreground",
+          )}
+        >
+          {title}
+        </h3>
+        <p className="text-muted-foreground font-medium">{description}</p>
+      </div>
+
+      <div className="mt-auto">{children}</div>
     </motion.div>
   );
 }
