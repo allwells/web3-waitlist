@@ -59,7 +59,11 @@ export default function App({
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
         <SessionProvider session={session}>
-          <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="dark"
+            enableSystem={false}
+          >
             <RainbowKitWrapper>
               <main className={inter.className}>
                 <ThemeToggle />
