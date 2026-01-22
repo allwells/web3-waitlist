@@ -49,7 +49,7 @@ export default function CustomCursor() {
     <AnimatePresence>
       {isVisible && (
         <motion.div
-          className="fixed top-0 left-0 pointer-events-none z-[9999] mix-blend-difference"
+          className="fixed top-0 left-0 pointer-events-none z-2147483647 mix-blend-difference"
           initial={{ opacity: 0 }}
           animate={{
             x: mousePosition.x - 16,
@@ -58,7 +58,7 @@ export default function CustomCursor() {
             opacity: 1,
           }}
           exit={{ opacity: 0 }}
-          transition={{ type: "spring", stiffness: 500, damping: 28 }}
+          transition={{ duration: 0 }}
         >
           <img src="/images/cursor.svg" alt="cursor" width={32} height={32} />
         </motion.div>

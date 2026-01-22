@@ -19,16 +19,16 @@ export default function Home() {
   useEffect(() => setMounted(true), []);
 
   // Redirect to dashboard if fully authenticated
+  // Also, if session exists (user logged in to X), skip splash screen
   useEffect(() => {
+    if (session) {
+      setFlowStarted(true);
+    }
+
     if (isConnected && session) {
       router.push("/dashboard");
     }
   }, [isConnected, session, router]);
-
-  // Determine current step in the flow
-  // Step 0: Splash Screen (Logo only)
-  // Step 1: Connect X
-  // Step 2: Connect Wallet
 
   const currentStep = !session ? 1 : 2;
 
@@ -46,8 +46,8 @@ export default function Home() {
       </div>
 
       <main className="z-10 w-full max-w-md flex flex-col items-center text-center">
-        {/* State 0: Splash Screen / Entry */}
-        {!flowStarted ? (
+        {/* State 0: Splash Screen / Entry - Only show if NO session and flow NOT started */}
+        {!flowStarted && !session ? (
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -64,14 +64,7 @@ export default function Home() {
                 priority
               />
             </div>
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 1, duration: 1 }}
-              className="mt-8 text-neutral-500 text-sm font-medium tracking-widest uppercase animate-pulse"
-            >
-              Tap to Enter
-            </motion.p>
+            {/* Removed text as requested */}
           </motion.div>
         ) : (
           /* flowStarted: Show Auth Steps */
@@ -97,7 +90,7 @@ export default function Home() {
                   "transition-all duration-500",
                   currentStep === 1
                     ? "opacity-100 scale-100"
-                    : "opacity-50 grayscale blur-sm pointer-events-none",
+                    : "opacity-50 grayscale blur-lg pointer-events-none",
                 )}
               >
                 <div className="bg-neutral-900 border border-neutral-800 rounded-2xl p-6">

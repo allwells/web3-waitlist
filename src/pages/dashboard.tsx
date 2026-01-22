@@ -88,11 +88,11 @@ export default function Dashboard() {
   // Protected Route Logic
   useEffect(() => {
     if (mounted && status !== "loading") {
-      if (!session || !isConnected) {
+      if (!session) {
         router.push("/");
       }
     }
-  }, [session, isConnected, status, mounted, router]);
+  }, [session, status, mounted, router]);
 
   const handleCopy = () => {
     const refCode = address || session?.user?.name || "user123";
@@ -107,7 +107,7 @@ export default function Dashboard() {
     signOut({ callbackUrl: "/" }); // Sign out of X/NextAuth and redirect home
   };
 
-  if (!mounted || status === "loading" || !session || !isConnected) return null;
+  if (!mounted || status === "loading" || !session) return null;
 
   return (
     <div className="min-h-screen bg-black text-foreground transition-colors duration-300 font-sans selection:bg-[#14ee26] selection:text-black flex flex-col items-center p-6 relative overflow-hidden">
@@ -143,13 +143,7 @@ export default function Dashboard() {
             </h1>
           </div>
 
-          <div className="hidden md:flex flex-col items-end">
-            <div className="flex items-center gap-2 mb-4">
-              <div className="w-2 h-2 rounded-full bg-[#14ee26] animate-pulse" />
-              <span className="text-sm font-medium text-muted-foreground">
-                Access Granted
-              </span>
-            </div>
+          <div className="hidden md:flex flex-col items-end pt-8">
             <button
               onClick={handleLogout}
               className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white/5 hover:bg-white/10 text-sm text-muted-foreground hover:text-red-500 transition-all border border-transparent hover:border-red-500/20"
@@ -161,7 +155,7 @@ export default function Dashboard() {
         </header>
 
         <BentoGrid className="mb-12">
-          {/* Social Identity */}
+          {/* Social Identity - Large Card */}
           <BentoGridItem
             className="md:col-span-2"
             title={
@@ -192,7 +186,7 @@ export default function Dashboard() {
             }
           />
 
-          {/* Wallet Connection */}
+          {/* Wallet Connection - Tall Card */}
           <BentoGridItem
             className="md:row-span-2"
             title="Web3 Wallet"
@@ -201,24 +195,37 @@ export default function Dashboard() {
             header={
               <div className="flex-1 w-full bg-white/5 rounded-lg flex flex-col items-center justify-center p-4 border border-white/5 backdrop-blur-sm">
                 <div className="text-center w-full">
-                  <div className="relative w-20 h-20 mx-auto mb-4">
-                    <div className="absolute inset-0 bg-[#14ee26] rounded-full blur-xl opacity-20 animate-pulse"></div>
-                    <div className="relative w-full h-full bg-gradient-to-tr from-purple-500 to-blue-500 rounded-full border-2 border-[#14ee26]"></div>
-                  </div>
+                  {isConnected ? (
+                    <>
+                      <div className="relative w-20 h-20 mx-auto mb-4">
+                        <div className="absolute inset-0 bg-[#14ee26] rounded-full blur-xl opacity-20 animate-pulse"></div>
+                        <div className="relative w-full h-full bg-gradient-to-tr from-purple-500 to-blue-500 rounded-full border-2 border-[#14ee26]"></div>
+                      </div>
 
-                  <div className="px-3 py-1 bg-[#14ee26]/10 text-[#14ee26] rounded-full text-xs font-mono inline-block mb-4 border border-[#14ee26]/20">
-                    Connected
-                  </div>
+                      <div className="px-3 py-1 bg-[#14ee26]/10 text-[#14ee26] rounded-full text-xs font-mono inline-block mb-4 border border-[#14ee26]/20">
+                        Connected
+                      </div>
 
-                  <p className="font-mono text-sm truncate max-w-[180px] mx-auto mb-6 text-neutral-400 bg-black/50 px-3 py-1.5 rounded-md border border-white/10">
-                    {address}
-                  </p>
+                      <p className="font-mono text-sm truncate max-w-[180px] mx-auto mb-6 text-neutral-400 bg-black/50 px-3 py-1.5 rounded-md border border-white/10">
+                        {address}
+                      </p>
+                    </>
+                  ) : (
+                    <div className="mb-6">
+                      <div className="w-20 h-20 mx-auto bg-white/5 rounded-full mb-4 border-2 border-dashed border-white/20 flex items-center justify-center">
+                        <Wallet className="w-8 h-8 text-neutral-500" />
+                      </div>
+                      <p className="text-sm text-neutral-400 mb-4">
+                        Connect wallet to access full features
+                      </p>
+                    </div>
+                  )}
 
                   <div className="flex justify-center">
                     <ConnectButton.Custom>
                       {({ openAccountModal, openConnectModal, mounted }) => {
                         const ready = mounted;
-                        const connected = ready && address;
+                        const connected = ready && isConnected;
 
                         return (
                           <div className="w-full">
@@ -255,9 +262,9 @@ export default function Dashboard() {
             }
           />
 
-          {/* Referral System */}
+          {/* Referral System - Widened Card */}
           <BentoGridItem
-            className="md:col-span-1"
+            className="md:col-span-2"
             title="Referrals"
             description="Invite friends to boost your position."
             icon={<Users className="w-6 h-6 text-[#14ee26]" />}
@@ -287,36 +294,7 @@ export default function Dashboard() {
               </div>
             }
           />
-
-          {/* Analytics Stats */}
-          <BentoGridItem
-            className="md:col-span-1"
-            title="Waitlist Position"
-            description="Your current global ranking."
-            icon={<Trophy className="w-6 h-6 text-yellow-500" />}
-            header={
-              <div className="flex-1 flex items-center justify-center text-4xl font-black bg-white/5 rounded-lg border border-white/5 backdrop-blur-sm">
-                #4,821
-              </div>
-            }
-          />
         </BentoGrid>
-
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-20">
-          {["Total Users", "24h Volume", "Network", "Status"].map((item, i) => (
-            <div
-              key={i}
-              className="p-4 rounded-xl border border-white/5 bg-black/20 backdrop-blur-sm"
-            >
-              <p className="text-xs text-muted-foreground uppercase tracking-widest mb-1">
-                {item}
-              </p>
-              <p className="font-mono text-lg font-bold">
-                {i === 3 ? <span className="text-[#14ee26]">Live</span> : "---"}
-              </p>
-            </div>
-          ))}
-        </div>
       </main>
     </div>
   );
