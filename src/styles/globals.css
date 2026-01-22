@@ -52,7 +52,16 @@ body {
   color: var(--foreground);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
-  cursor: none; /* Hide default cursor */
+  cursor: none !important; /* Hide default cursor */
+}
+
+a,
+button,
+[role="button"],
+input,
+select,
+textarea {
+  cursor: none !important;
 }
 
 /* Custom Selection Color */
