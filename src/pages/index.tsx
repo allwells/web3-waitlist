@@ -52,7 +52,7 @@ export default function Home() {
         >
           <div className="inline-flex items-center justify-center p-2 mb-6 bg-white/50 backdrop-blur-sm rounded-full border border-gray-100 shadow-sm relative overflow-hidden group">
             {/* Subtle green shimmer on hover */}
-            <div className="absolute inset-0 bg-[#14ee26]/10 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
+            <div className="absolute inset-0 bg-[#14ee26]/10 translate-x-full group-hover:translate-x-full transition-transform duration-700" />
             <Sparkles className="w-4 h-4 text-black mr-2 relative z-10" />
             <span className="text-xs font-bold text-gray-800 tracking-wide uppercase relative z-10">
               Early Access
@@ -62,7 +62,7 @@ export default function Home() {
             Future of <br />
             <span className="relative inline-block">
               <span className="relative z-10">Web3 Identity</span>
-              <span className="absolute bottom-1 left-0 w-full h-3 bg-[#14ee26]/40 -skew-x-6 -z-0" />
+              <span className="absolute bottom-1 left-0 w-full h-3 bg-[#14ee26]/40 -skew-x-6 z-0" />
             </span>
           </h1>
           <p className="text-lg text-gray-600 font-medium max-w-xs mx-auto">
